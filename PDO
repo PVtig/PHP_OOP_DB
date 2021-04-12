@@ -1,0 +1,59 @@
+<?php
+
+require_once './query.php';
+
+try {
+    $pdo = new PDO('mysql:host=sdb-d.hosting.stackcp.net; dbname=lernCrud-313733a23d', 'vlad22006', 'PRO100vlad');
+    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+    $pdo->exec(SQL_CREATE_PERSON_TABLE);
+    $pdo->exec(SQL_CREATE_ACCOUNT_TABLE);
+} catch (PDOException $e) {
+    exit($e->getMessage());
+}
+
+try {
+    $pdo->beginTransaction();
+
+    $stmt = $pdo->prepare(SQL_INSERT_PERSON);
+    $stmt->execute([
+        ':firstname' => 'Ivan',
+        ':lastname' => 'Abramov',
+        ':patro' => 'Volm'
+    ]);
+    $id = $pdo->lastInsertId();
+
+    $stmt = $pdo->prepare(SQL_INSERT_ACCOUNT);
+    $stmt->execute([
+        ':parson_id' => $id,
+        ':username' => 'Abramov-kiv',
+        ':password' => 'qwery!'
+    ]);
+    $pdo->commit();
+} catch (PDOException $e) {
+    $pdo->rollBack();
+}
+
+// $servername = "sdb-d.hosting.stackcp.net";
+// $username = "vlad22006";
+// $password = "PRO100vlad";
+// $dbname = "lernCrud-313733a23d";
+// $connect = mysqli_connect($servername, $username, $password, $dbname);
+
+// if (!$connect) {
+//     die('Error connect to DataBase');
+// }
+
+// try {
+//     $pdo = new PDO('cars.sqlite');
+//     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+// } catch (PDOException $e) {
+//     exit($e->getMessage());
+// }
+
+    // $result = $pdo->prepare(SQL_INSERT_MENU_ITEM);
+    // var_dump($result);
+
+    // for ($i = 0; $i < 2; $i++) {
+    //     $result->execute([null, 'Post ' . $i, '/post' . $i]);
+    // }
